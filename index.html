@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お題シャッフルアプリ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+        }
+        input {
+            width: 80%;
+            padding: 8px;
+            margin: 5px 0;
+        }
+        button {
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>お題シャッフルアプリ</h2>
+        <input type="text" id="name" placeholder="名前を入力">
+        <input type="text" id="word1" placeholder="お題1">
+        <input type="text" id="word2" placeholder="お題2">
+        <button id="submit">送信</button>
+        <div class="result" id="result"></div>
+    </div>
+
+</body>
+</html>
