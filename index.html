@@ -11,26 +11,32 @@
             margin: 20px;
         }
         .container {
-            max-width: 400px;
+            max-width: 500px;
             margin: auto;
         }
-        input {
-            width: 80%;
+        select, button {
             padding: 8px;
-            margin: 5px 0;
-        }
-        button {
-            padding: 10px;
-            margin-top: 10px;
+            margin: 10px 0;
             cursor: pointer;
+        }
+        .player-container {
+            margin-top: 20px;
+        }
+        .player-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .player-row input {
+            flex: 1;
+            padding: 8px;
+            margin: 0 5px;
         }
         .result {
             margin-top: 20px;
             font-size: 18px;
             font-weight: bold;
-        }
-        .player-container {
-            margin-top: 20px;
         }
     </style>
 </head>
@@ -63,8 +69,8 @@
 
             for (let i = 0; i < playerCount; i++) {
                 let div = document.createElement("div");
+                div.classList.add("player-row");
                 div.innerHTML = `
-                    <h3>プレイヤー${i + 1}</h3>
                     <input type="text" placeholder="名前" class="name">
                     <input type="text" placeholder="お題1" class="word1">
                     <input type="text" placeholder="お題2" class="word2">
