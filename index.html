@@ -29,18 +29,53 @@
             font-size: 18px;
             font-weight: bold;
         }
+        .player-container {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h2>お題シャッフルアプリ</h2>
-        <input type="text" id="name" placeholder="名前を入力">
-        <input type="text" id="word1" placeholder="お題1">
-        <input type="text" id="word2" placeholder="お題2">
-        <button id="submit">送信</button>
+        
+        <label for="playerCount">人数を選択：</label>
+        <select id="playerCount">
+            <option value="2">2人</option>
+            <option value="3">3人</option>
+            <option value="4" selected>4人</option>
+            <option value="5">5人</option>
+            <option value="6">6人</option>
+        </select>
+        <button id="generateInputs">入力欄を生成</button>
+
+        <div class="player-container" id="playerContainer"></div>
+
+        <button id="submit" style="display:none;">送信</button>
         <div class="result" id="result"></div>
     </div>
+
+    <script>
+        document.getElementById("generateInputs").addEventListener("click", function() {
+            let playerCount = document.getElementById("playerCount").value;
+            let container = document.getElementById("playerContainer");
+            container.innerHTML = ""; // 一旦クリア
+
+            for (let i = 0; i < playerCount; i++) {
+                let div = document.createElement("div");
+                div.innerHTML = `
+                    <h3>プレイヤー${i + 1}</h3>
+                    <input type="text" placeholder="名前" class="name">
+                    <input type="text" placeholder="お題1" class="word1">
+                    <input type="text" placeholder="お題2" class="word2">
+                `;
+                container.appendChild(div);
+            }
+
+            // 送信ボタンを表示
+            document.getElementById("submit").style.display = "block";
+        });
+    </script>
 
 </body>
 </html>
