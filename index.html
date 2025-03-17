@@ -58,6 +58,7 @@
         <div class="player-container" id="playerContainer"></div>
 
         <button id="submit" style="display:none;">送信</button>
+        <button id="reset" style="display:none;">リセット</button>
         <div class="result" id="result"></div>
     </div>
 
@@ -78,11 +79,10 @@
                 container.appendChild(div);
             }
 
-            // 送信ボタンを表示
             document.getElementById("submit").style.display = "block";
+            document.getElementById("reset").style.display = "block";
         });
 
-        // シャッフル関数
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 let j = Math.floor(Math.random() * (i + 1));
@@ -90,19 +90,17 @@
             }
         }
 
-        // データ取得＆シャッフル処理
         document.getElementById("submit").addEventListener("click", function() {
             let names = [];
             let words1 = [];
             let words2 = [];
 
-            // 各プレイヤーのデータを取得
             document.querySelectorAll(".player-row").forEach(row => {
                 let name = row.querySelector(".name").value.trim();
                 let word1 = row.querySelector(".word1").value.trim();
                 let word2 = row.querySelector(".word2").value.trim();
 
-                if (name && word1 && word2) { // 空欄がない場合のみ追加
+                if (name && word1 && word2) {
                     names.push(name);
                     words1.push(word1);
                     words2.push(word2);
@@ -110,46 +108,33 @@
             });
 
             if (names.length < 2) {
-                alert("最低2人以上必要です！");
+                alert("2人以上の入力が必要です。");
                 return;
             }
 
-            // お題をシャッフル（とりあえずランダムに入れ替える）
-            let shuffledWords1 = [...words1];
-            let shuffledWords2 = [...words2];
-
+            let shuffled1 = [...words1];
+            let shuffled2 = [...words2];
             do {
-                shuffleArray(shuffledWords1);
-                shuffleArray(shuffledWords2);
-            } while (!isValidShuffle(names, words1, words2, shuffledWords1, shuffledWords2));
+                shuffleArray(shuffled1);
+                shuffleArray(shuffled2);
+            } while (shuffled1.some((word, index) => word === words1[index]) ||
+                     shuffled2.some((word, index) => word === words2[index]) ||
+                     shuffled1.some((word, index) => word === shuffled2[index]));
 
-            // シャッフル結果を表示
-            let resultText = "<h3>お題一覧</h3>";
+            let resultText = "<h3>シャッフル結果</h3><table border='1' style='margin:auto;'><tr><th>名前</th><th>お題1</th><th>お題2</th></tr>";
             for (let i = 0; i < names.length; i++) {
-                resultText += `<p>${names[i]} のお題 → ${shuffledWords1[i]} , ${shuffledWords2[i]}</p>`;
+                resultText += `<tr><td>${names[i]}</td><td>${shuffled1[i]}</td><td>${shuffled2[i]}</td></tr>`;
             }
+            resultText += "</table>";
             document.getElementById("result").innerHTML = resultText;
         });
 
-        // シャッフルが有効かチェックする関数
-        function isValidShuffle(names, original1, original2, shuffled1, shuffled2) {
-            for (let i = 0; i < names.length; i++) {
-                if ((shuffled1[i] === original1[i] || shuffled1[i] === original2[i]) ||
-                    (shuffled2[i] === original1[i] || shuffled2[i] === original2[i])) {
-                    return false; // 自分が出したお題が当たってしまう
-                }
-
-                for (let j = 0; j < names.length; j++) {
-                    if (i !== j) {
-                        if ((shuffled1[i] === original1[j] && shuffled2[i] === original2[j]) ||
-                            (shuffled1[i] === original2[j] && shuffled2[i] === original1[j])) {
-                            return false; // 同じ人の組み合わせになってしまう
-                        }
-                    }
-                }
-            }
-            return true;
-        }
+        document.getElementById("reset").addEventListener("click", function() {
+            document.getElementById("playerContainer").innerHTML = "";
+            document.getElementById("submit").style.display = "none";
+            document.getElementById("reset").style.display = "none";
+            document.getElementById("result").innerHTML = "";
+        });
     </script>
 
 </body>
