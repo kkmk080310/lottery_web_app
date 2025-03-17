@@ -81,6 +81,34 @@
             // 送信ボタンを表示
             document.getElementById("submit").style.display = "block";
         });
+
+        // データ取得処理
+        document.getElementById("submit").addEventListener("click", function() {
+            let names = [];
+            let words1 = [];
+            let words2 = [];
+
+            // 各プレイヤーのデータを取得
+            document.querySelectorAll(".player-row").forEach(row => {
+                let name = row.querySelector(".name").value.trim();
+                let word1 = row.querySelector(".word1").value.trim();
+                let word2 = row.querySelector(".word2").value.trim();
+
+                if (name && word1 && word2) { // 空欄がない場合のみ追加
+                    names.push(name);
+                    words1.push(word1);
+                    words2.push(word2);
+                }
+            });
+
+            // 取得したデータを確認（コンソールに出力）
+            console.log("名前リスト:", names);
+            console.log("お題1リスト:", words1);
+            console.log("お題2リスト:", words2);
+
+            // テストとして画面にも出力
+            document.getElementById("result").innerText = `取得データ確認 → 名前: ${names.join(", ")} / お題1: ${words1.join(", ")} / お題2: ${words2.join(", ")}`;
+        });
     </script>
 
 </body>
