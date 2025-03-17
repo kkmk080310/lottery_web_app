@@ -13,7 +13,7 @@
 </head>
 <body>
     <div class="container">
-        <h4>バージョン 1.0</h4>
+        <h4>バージョン 1.1</h4>
         <h2>お題シャッフルアプリ</h2>
         
         <label for="playerCount">人数を選択：</label>
@@ -74,20 +74,23 @@
             });
             
             let shuffledWords = players.flatMap(p => [p.word1, p.word2]);
-            shuffledWords = shuffledWords.sort(() => Math.random() - 0.5);
+            let validAssignments = false;
+            let results = [];
             
-            let results = players.map(player => {
-                let word1, word2;
-                do {
-                    word1 = shuffledWords.splice(Math.floor(Math.random() * shuffledWords.length), 1)[0];
-                } while (player.word1 === word1 || player.word2 === word1);
-                
-                do {
-                    word2 = shuffledWords.splice(Math.floor(Math.random() * shuffledWords.length), 1)[0];
-                } while (player.word1 === word2 || player.word2 === word2);
-                
-                return { name: player.name, word1, word2 };
-            });
+            while (!validAssignments) {
+                let tempShuffled = [...shuffledWords].sort(() => Math.random() - 0.5);
+                validAssignments = true;
+                results = players.map(player => {
+                    let availableWords = tempShuffled.filter(w => w !== player.word1 && w !== player.word2);
+                    if (availableWords.length < 2) {
+                        validAssignments = false;
+                        return null;
+                    }
+                    let word1 = availableWords.splice(Math.floor(Math.random() * availableWords.length), 1)[0];
+                    let word2 = availableWords.splice(Math.floor(Math.random() * availableWords.length), 1)[0];
+                    return { name: player.name, word1, word2 };
+                });
+            }
             displayResults(results);
         });
 
