@@ -57,6 +57,10 @@
         .controls {
             margin-bottom: 20px;
         }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -74,19 +78,22 @@
         </div>
         
         <div class="player-container" id="playerContainer"></div>
-
-        <div class="button-container" id="buttons" style="display:none;">
+        <div class="error" id="error"></div>
+        <div class="button-container">
             <button id="submit">送信</button>
+        </div>
+        <div class="result" id="result"></div>
+        <div class="button-container" id="resetContainer" style="display:none;">
             <button id="reset">リセット</button>
         </div>
-        
-        <div class="result" id="result"></div>
     </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const container = document.getElementById("playerContainer");
             const playerCountSelect = document.getElementById("playerCount");
+            const resetButton = document.getElementById("reset");
+            const resetContainer = document.getElementById("resetContainer");
 
             function createPlayerInputs(count) {
                 container.innerHTML = "";
@@ -95,12 +102,11 @@
                     div.classList.add("player-row");
                     div.innerHTML = `
                         <input type="text" placeholder="名前" class="name">
-                        <input type="text" placeholder="お題1" class="word1">
-                        <input type="text" placeholder="お題2" class="word2">
+                        <input type="text" placeholder="キャラクター" class="word1">
+                        <input type="text" placeholder="要素" class="word2">
                     `;
                     container.appendChild(div);
                 }
-                document.getElementById("buttons").style.display = "flex";
             }
 
             playerCountSelect.addEventListener("change", function() {
@@ -108,57 +114,69 @@
             });
 
             createPlayerInputs(parseInt(playerCountSelect.value));
-        });
 
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                let j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
-        document.getElementById("submit").addEventListener("click", function() {
-            let names = [];
-            let words1 = [];
-            let words2 = [];
-
-            document.querySelectorAll(".player-row").forEach(row => {
-                let name = row.querySelector(".name").value.trim();
-                let word1 = row.querySelector(".word1").value.trim();
-                let word2 = row.querySelector(".word2").value.trim();
-
-                if (name && word1 && word2) {
-                    names.push(name);
-                    words1.push(word1);
-                    words2.push(word2);
+            function shuffleArray(array) {
+                for (let i = array.length - 1; i > 0; i--) {
+                    let j = Math.floor(Math.random() * (i + 1));
+                    [array[i], array[j]] = [array[j], array[i]];
                 }
+            }
+
+            document.getElementById("submit").addEventListener("click", function() {
+                let names = [];
+                let words1 = [];
+                let words2 = [];
+                let errorDiv = document.getElementById("error");
+                errorDiv.textContent = "";
+
+                document.querySelectorAll(".player-row").forEach(row => {
+                    let name = row.querySelector(".name").value.trim();
+                    let word1 = row.querySelector(".word1").value.trim();
+                    let word2 = row.querySelector(".word2").value.trim();
+
+                    if (name && word1 && word2) {
+                        names.push(name);
+                        words1.push(word1);
+                        words2.push(word2);
+                    }
+                });
+
+                if (names.length < 3) {
+                    errorDiv.textContent = "3人以上の入力が必要です。";
+                    return;
+                }
+
+                let allWords = [...words1, ...words2];
+                let uniqueWords = new Set(allWords);
+                if (uniqueWords.size !== allWords.length) {
+                    errorDiv.textContent = "同じ単語が入力されています。異なる単語を入力してください。";
+                    return;
+                }
+
+                let shuffled1 = [...words1];
+                let shuffled2 = [...words2];
+                do {
+                    shuffleArray(shuffled1);
+                    shuffleArray(shuffled2);
+                } while (shuffled1.some((word, index) => word === words1[index]) ||
+                         shuffled2.some((word, index) => word === words2[index]) ||
+                         shuffled1.some((word, index) => word === shuffled2[index]));
+
+                let resultText = "<h3>シャッフル結果</h3><table><tr><th>名前</th><th>キャラクター</th><th>要素</th></tr>";
+                for (let i = 0; i < names.length; i++) {
+                    resultText += `<tr><td>${names[i]}</td><td>${shuffled1[i]}</td><td>${shuffled2[i]}</td></tr>`;
+                }
+                resultText += "</table>";
+                document.getElementById("result").innerHTML = resultText;
+                resetContainer.style.display = "flex";
             });
 
-            if (names.length < 3) {
-                alert("3人以上の入力が必要です。");
-                return;
-            }
-
-            let shuffled1 = [...words1];
-            let shuffled2 = [...words2];
-            do {
-                shuffleArray(shuffled1);
-                shuffleArray(shuffled2);
-            } while (shuffled1.some((word, index) => word === words1[index]) ||
-                     shuffled2.some((word, index) => word === words2[index]) ||
-                     shuffled1.some((word, index) => word === shuffled2[index]));
-
-            let resultText = "<h3>シャッフル結果</h3><table><tr><th>名前</th><th>お題1</th><th>お題2</th></tr>";
-            for (let i = 0; i < names.length; i++) {
-                resultText += `<tr><td>${names[i]}</td><td>${shuffled1[i]}</td><td>${shuffled2[i]}</td></tr>`;
-            }
-            resultText += "</table>";
-            document.getElementById("result").innerHTML = resultText;
-        });
-
-        document.getElementById("reset").addEventListener("click", function() {
-            document.querySelectorAll(".player-row input").forEach(input => input.value = "");
-            document.getElementById("result").innerHTML = "";
+            resetButton.addEventListener("click", function() {
+                document.getElementById("result").innerHTML = "";
+                document.getElementById("error").textContent = "";
+                createPlayerInputs(parseInt(playerCountSelect.value));
+                resetContainer.style.display = "none";
+            });
         });
     </script>
 
