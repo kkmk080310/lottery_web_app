@@ -11,13 +11,14 @@
             margin: 20px;
         }
         .container {
-            max-width: 500px;
+            max-width: 800px;
             margin: auto;
         }
-        select, button {
-            padding: 8px;
+        button {
+            padding: 10px;
             margin: 10px 0;
             cursor: pointer;
+            width: 45%;
         }
         .player-container {
             margin-top: 20px;
@@ -38,49 +39,74 @@
             font-size: 18px;
             font-weight: bold;
         }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 15px;
+            text-align: center;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h2>お題シャッフルアプリ</h2>
+        <div class="controls">
+            <label for="playerCount">プレイヤー人数: </label>
+            <select id="playerCount">
+                <option value="3">3人</option>
+                <option value="4" selected>4人</option>
+                <option value="5">5人</option>
+                <option value="6">6人</option>
+            </select>
+        </div>
         
-        <label for="playerCount">人数を選択：</label>
-        <select id="playerCount">
-            <option value="2">2人</option>
-            <option value="3">3人</option>
-            <option value="4" selected>4人</option>
-            <option value="5">5人</option>
-            <option value="6">6人</option>
-        </select>
-        <button id="generateInputs">入力欄を生成</button>
-
         <div class="player-container" id="playerContainer"></div>
 
-        <button id="submit" style="display:none;">送信</button>
-        <button id="reset" style="display:none;">リセット</button>
+        <div class="button-container" id="buttons" style="display:none;">
+            <button id="submit">送信</button>
+            <button id="reset">リセット</button>
+        </div>
+        
         <div class="result" id="result"></div>
     </div>
 
     <script>
-        document.getElementById("generateInputs").addEventListener("click", function() {
-            let playerCount = document.getElementById("playerCount").value;
-            let container = document.getElementById("playerContainer");
-            container.innerHTML = ""; // 一旦クリア
+        document.addEventListener("DOMContentLoaded", function() {
+            const container = document.getElementById("playerContainer");
+            const playerCountSelect = document.getElementById("playerCount");
 
-            for (let i = 0; i < playerCount; i++) {
-                let div = document.createElement("div");
-                div.classList.add("player-row");
-                div.innerHTML = `
-                    <input type="text" placeholder="名前" class="name">
-                    <input type="text" placeholder="お題1" class="word1">
-                    <input type="text" placeholder="お題2" class="word2">
-                `;
-                container.appendChild(div);
+            function createPlayerInputs(count) {
+                container.innerHTML = "";
+                for (let i = 0; i < count; i++) {
+                    let div = document.createElement("div");
+                    div.classList.add("player-row");
+                    div.innerHTML = `
+                        <input type="text" placeholder="名前" class="name">
+                        <input type="text" placeholder="お題1" class="word1">
+                        <input type="text" placeholder="お題2" class="word2">
+                    `;
+                    container.appendChild(div);
+                }
+                document.getElementById("buttons").style.display = "flex";
             }
 
-            document.getElementById("submit").style.display = "block";
-            document.getElementById("reset").style.display = "block";
+            playerCountSelect.addEventListener("change", function() {
+                createPlayerInputs(parseInt(this.value));
+            });
+
+            createPlayerInputs(parseInt(playerCountSelect.value));
         });
 
         function shuffleArray(array) {
@@ -107,8 +133,8 @@
                 }
             });
 
-            if (names.length < 2) {
-                alert("2人以上の入力が必要です。");
+            if (names.length < 3) {
+                alert("3人以上の入力が必要です。");
                 return;
             }
 
@@ -121,7 +147,7 @@
                      shuffled2.some((word, index) => word === words2[index]) ||
                      shuffled1.some((word, index) => word === shuffled2[index]));
 
-            let resultText = "<h3>シャッフル結果</h3><table border='1' style='margin:auto;'><tr><th>名前</th><th>お題1</th><th>お題2</th></tr>";
+            let resultText = "<h3>シャッフル結果</h3><table><tr><th>名前</th><th>お題1</th><th>お題2</th></tr>";
             for (let i = 0; i < names.length; i++) {
                 resultText += `<tr><td>${names[i]}</td><td>${shuffled1[i]}</td><td>${shuffled2[i]}</td></tr>`;
             }
@@ -130,9 +156,7 @@
         });
 
         document.getElementById("reset").addEventListener("click", function() {
-            document.getElementById("playerContainer").innerHTML = "";
-            document.getElementById("submit").style.display = "none";
-            document.getElementById("reset").style.display = "none";
+            document.querySelectorAll(".player-row input").forEach(input => input.value = "");
             document.getElementById("result").innerHTML = "";
         });
     </script>
