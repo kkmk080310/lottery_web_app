@@ -82,7 +82,15 @@
             document.getElementById("submit").style.display = "block";
         });
 
-        // データ取得処理
+        // シャッフル関数
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // データ取得＆シャッフル処理
         document.getElementById("submit").addEventListener("click", function() {
             let names = [];
             let words1 = [];
@@ -101,14 +109,47 @@
                 }
             });
 
-            // 取得したデータを確認（コンソールに出力）
-            console.log("名前リスト:", names);
-            console.log("お題1リスト:", words1);
-            console.log("お題2リスト:", words2);
+            if (names.length < 2) {
+                alert("最低2人以上必要です！");
+                return;
+            }
 
-            // テストとして画面にも出力
-            document.getElementById("result").innerText = `取得データ確認 → 名前: ${names.join(", ")} / お題1: ${words1.join(", ")} / お題2: ${words2.join(", ")}`;
+            // お題をシャッフル（とりあえずランダムに入れ替える）
+            let shuffledWords1 = [...words1];
+            let shuffledWords2 = [...words2];
+
+            do {
+                shuffleArray(shuffledWords1);
+                shuffleArray(shuffledWords2);
+            } while (!isValidShuffle(names, words1, words2, shuffledWords1, shuffledWords2));
+
+            // シャッフル結果を表示
+            let resultText = "<h3>お題一覧</h3>";
+            for (let i = 0; i < names.length; i++) {
+                resultText += `<p>${names[i]} のお題 → ${shuffledWords1[i]} , ${shuffledWords2[i]}</p>`;
+            }
+            document.getElementById("result").innerHTML = resultText;
         });
+
+        // シャッフルが有効かチェックする関数
+        function isValidShuffle(names, original1, original2, shuffled1, shuffled2) {
+            for (let i = 0; i < names.length; i++) {
+                if ((shuffled1[i] === original1[i] || shuffled1[i] === original2[i]) ||
+                    (shuffled2[i] === original1[i] || shuffled2[i] === original2[i])) {
+                    return false; // 自分が出したお題が当たってしまう
+                }
+
+                for (let j = 0; j < names.length; j++) {
+                    if (i !== j) {
+                        if ((shuffled1[i] === original1[j] && shuffled2[i] === original2[j]) ||
+                            (shuffled1[i] === original2[j] && shuffled2[i] === original1[j])) {
+                            return false; // 同じ人の組み合わせになってしまう
+                        }
+                    }
+                }
+            }
+            return true;
+        }
     </script>
 
 </body>
