@@ -5,44 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>お題シャッフルアプリ</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-        }
-        .container {
-            max-width: 500px;
-            margin: auto;
-        }
-        select, button {
-            padding: 8px;
-            margin: 10px 0;
-            cursor: pointer;
-        }
-        .player-container {
-            margin-top: 20px;
-        }
-        .player-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .player-row input {
-            flex: 1;
-            padding: 8px;
-            margin: 0 5px;
-        }
-        .result {
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
-        }
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .container { width: 80%; margin: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid black; padding: 10px; text-align: center; }
     </style>
 </head>
 <body>
-
     <div class="container">
+        <h4>バージョン 1.0</h4>
         <h2>お題シャッフルアプリ</h2>
         
         <label for="playerCount">人数を選択：</label>
@@ -58,99 +29,81 @@
         <div class="player-container" id="playerContainer"></div>
 
         <button id="submit" style="display:none;">送信</button>
-        <div class="result" id="result"></div>
+
+        <div id="resultContainer" style="display: none;">
+            <h3>シャッフル結果</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>プレイヤー</th>
+                        <th>お題1</th>
+                        <th>お題2</th>
+                    </tr>
+                </thead>
+                <tbody id="resultTableBody"></tbody>
+            </table>
+        </div>
     </div>
 
     <script>
         document.getElementById("generateInputs").addEventListener("click", function() {
-            let playerCount = document.getElementById("playerCount").value;
+            let count = parseInt(document.getElementById("playerCount").value);
             let container = document.getElementById("playerContainer");
-            container.innerHTML = ""; // 一旦クリア
-
-            for (let i = 0; i < playerCount; i++) {
+            container.innerHTML = "";
+            
+            for (let i = 0; i < count; i++) {
                 let div = document.createElement("div");
-                div.classList.add("player-row");
                 div.innerHTML = `
-                    <input type="text" placeholder="名前" class="name">
+                    <input type="text" placeholder="プレイヤー名" class="playerName">
                     <input type="text" placeholder="お題1" class="word1">
                     <input type="text" placeholder="お題2" class="word2">
                 `;
                 container.appendChild(div);
             }
-
-            // 送信ボタンを表示
             document.getElementById("submit").style.display = "block";
         });
 
-        // シャッフル関数
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                let j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
-        }
-
-        // データ取得＆シャッフル処理
         document.getElementById("submit").addEventListener("click", function() {
-            let names = [];
-            let words1 = [];
-            let words2 = [];
-
-            // 各プレイヤーのデータを取得
-            document.querySelectorAll(".player-row").forEach(row => {
-                let name = row.querySelector(".name").value.trim();
-                let word1 = row.querySelector(".word1").value.trim();
-                let word2 = row.querySelector(".word2").value.trim();
-
-                if (name && word1 && word2) { // 空欄がない場合のみ追加
-                    names.push(name);
-                    words1.push(word1);
-                    words2.push(word2);
-                }
+            let players = [];
+            document.querySelectorAll(".playerName").forEach((el, index) => {
+                players.push({
+                    name: el.value,
+                    word1: document.querySelectorAll(".word1")[index].value,
+                    word2: document.querySelectorAll(".word2")[index].value
+                });
             });
-
-            if (names.length < 2) {
-                alert("最低2人以上必要です！");
-                return;
-            }
-
-            // お題をシャッフル（とりあえずランダムに入れ替える）
-            let shuffledWords1 = [...words1];
-            let shuffledWords2 = [...words2];
-
-            do {
-                shuffleArray(shuffledWords1);
-                shuffleArray(shuffledWords2);
-            } while (!isValidShuffle(names, words1, words2, shuffledWords1, shuffledWords2));
-
-            // シャッフル結果を表示
-            let resultText = "<h3>お題一覧</h3>";
-            for (let i = 0; i < names.length; i++) {
-                resultText += `<p>${names[i]} のお題 → ${shuffledWords1[i]} , ${shuffledWords2[i]}</p>`;
-            }
-            document.getElementById("result").innerHTML = resultText;
+            
+            let shuffledWords = players.flatMap(p => [p.word1, p.word2]);
+            shuffledWords = shuffledWords.sort(() => Math.random() - 0.5);
+            
+            let results = players.map(player => {
+                let word1, word2;
+                do {
+                    word1 = shuffledWords.splice(Math.floor(Math.random() * shuffledWords.length), 1)[0];
+                } while (player.word1 === word1 || player.word2 === word1);
+                
+                do {
+                    word2 = shuffledWords.splice(Math.floor(Math.random() * shuffledWords.length), 1)[0];
+                } while (player.word1 === word2 || player.word2 === word2);
+                
+                return { name: player.name, word1, word2 };
+            });
+            displayResults(results);
         });
 
-        // シャッフルが有効かチェックする関数
-        function isValidShuffle(names, original1, original2, shuffled1, shuffled2) {
-            for (let i = 0; i < names.length; i++) {
-                if ((shuffled1[i] === original1[i] || shuffled1[i] === original2[i]) ||
-                    (shuffled2[i] === original1[i] || shuffled2[i] === original2[i])) {
-                    return false; // 自分が出したお題が当たってしまう
-                }
-
-                for (let j = 0; j < names.length; j++) {
-                    if (i !== j) {
-                        if ((shuffled1[i] === original1[j] && shuffled2[i] === original2[j]) ||
-                            (shuffled1[i] === original2[j] && shuffled2[i] === original1[j])) {
-                            return false; // 同じ人の組み合わせになってしまう
-                        }
-                    }
-                }
-            }
-            return true;
+        function displayResults(results) {
+            let resultContainer = document.getElementById("resultContainer");
+            let resultTableBody = document.getElementById("resultTableBody");
+            resultTableBody.innerHTML = "";
+            
+            results.forEach(player => {
+                let row = document.createElement("tr");
+                row.innerHTML = `<td>${player.name}</td><td>${player.word1}</td><td>${player.word2}</td>`;
+                resultTableBody.appendChild(row);
+            });
+            
+            resultContainer.style.display = "block";
         }
     </script>
-
 </body>
 </html>
