@@ -94,8 +94,8 @@
                     div.classList.add("player-row");
                     div.innerHTML = `
                         <input type="text" placeholder="名前" class="name">
-                        <input type="text" placeholder="お題1" class="word1">
-                        <input type="text" placeholder="お題2" class="word2">
+                        <input type="text" placeholder="キャラクターを入力" class="word1">
+                        <input type="text" placeholder="要素を入力" class="word2">
                     `;
                     container.appendChild(div);
                 }
@@ -147,7 +147,7 @@
                      shuffled2.some((word, index) => word === words2[index]) ||
                      shuffled1.some((word, index) => word === shuffled2[index]));
 
-            let resultText = "<h3>シャッフル結果</h3><table><tr><th>名前</th><th>お題1</th><th>お題2</th></tr>";
+            let resultText = "<h3>シャッフル結果</h3><table><tr><th>名前</th><th>キャラクター</th><th>要素</th></tr>";
             for (let i = 0; i < names.length; i++) {
                 resultText += `<tr><td>${names[i]}</td><td>${shuffled1[i]}</td><td>${shuffled2[i]}</td></tr>`;
             }
