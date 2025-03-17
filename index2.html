@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>お題シャッフルアプリ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+        }
+        select, button {
+            padding: 8px;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+        .player-container {
+            margin-top: 20px;
+        }
+        .player-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .player-row input {
+            flex: 1;
+            padding: 8px;
+            margin: 0 5px;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>お題シャッフルアプリ</h2>
+        
+        <label for="playerCount">人数を選択：</label>
+        <select id="playerCount">
+            <option value="2">2人</option>
+            <option value="3">3人</option>
+            <option value="4" selected>4人</option>
+            <option value="5">5人</option>
+            <option value="6">6人</option>
+        </select>
+        <button id="generateInputs">入力欄を生成</button>
+
+        <div class="player-container" id="playerContainer"></div>
+
+        <button id="submit" style="display:none;">送信</button>
+        <button id="reset" style="display:none;">リセット</button>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("generateInputs").addEventListener("click", function() {
+            let playerCount = document.getElementById("playerCount").value;
+            let container = document.getElementById("playerContainer");
+            container.innerHTML = ""; // 一旦クリア
+
+            for (let i = 0; i < playerCount; i++) {
+                let div = document.createElement("div");
+                div.classList.add("player-row");
+                div.innerHTML = `
+                    <input type="text" placeholder="名前" class="name">
+                    <input type="text" placeholder="お題1" class="word1">
+                    <input type="text" placeholder="お題2" class="word2">
+                `;
+                container.appendChild(div);
+            }
+
+            document.getElementById("submit").style.display = "block";
+            document.getElementById("reset").style.display = "block";
+        });
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                let j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        document.getElementById("submit").addEventListener("click", function() {
+            let names = [];
+            let words1 = [];
+            let words2 = [];
+
+            document.querySelectorAll(".player-row").forEach(row => {
+                let name = row.querySelector(".name").value.trim();
+                let word1 = row.querySelector(".word1").value.trim();
+                let word2 = row.querySelector(".word2").value.trim();
+
+                if (name && word1 && word2) {
+                    names.push(name);
+                    words1.push(word1);
+                    words2.push(word2);
+                }
+            });
+
+            if (names.length < 2) {
+                alert("2人以上の入力が必要です。");
+                return;
+            }
+
+            let shuffled1 = [...words1];
+            let shuffled2 = [...words2];
+            do {
+                shuffleArray(shuffled1);
+                shuffleArray(shuffled2);
+            } while (shuffled1.some((word, index) => word === words1[index]) ||
+                     shuffled2.some((word, index) => word === words2[index]) ||
+                     shuffled1.some((word, index) => word === shuffled2[index]));
+
+            let resultText = "<h3>シャッフル結果</h3><table border='1' style='margin:auto;'><tr><th>名前</th><th>お題1</th><th>お題2</th></tr>";
+            for (let i = 0; i < names.length; i++) {
+                resultText += `<tr><td>${names[i]}</td><td>${shuffled1[i]}</td><td>${shuffled2[i]}</td></tr>`;
+            }
+            resultText += "</table>";
+            document.getElementById("result").innerHTML = resultText;
+        });
+
+        document.getElementById("reset").addEventListener("click", function() {
+            document.getElementById("playerContainer").innerHTML = "";
+            document.getElementById("submit").style.display = "none";
+            document.getElementById("reset").style.display = "none";
+            document.getElementById("result").innerHTML = "";
+        });
+    </script>
+
+</body>
+</html>
