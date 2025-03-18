@@ -5,7 +5,7 @@ body {
 }
 
 .container {
-    width: 40%; /* デフォルトは40% */
+    width: 50%; /* デフォルトは50% */
     margin: 0 auto;
 }
 
