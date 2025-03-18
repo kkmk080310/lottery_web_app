@@ -11,8 +11,11 @@ function updateCheckboxes() {
     checkboxContainer.innerHTML = "";
     members.forEach(member => {
         const label = document.createElement("label");
-        label.className = "checkbox-label";
-        label.innerHTML = `<input type="checkbox" value="${member}"> ${member}`;
+label.className = "checkboxItem";
+label.innerHTML = `
+    <input type="checkbox" class="checkbox" value="${member}">
+    ${member}
+`;
         checkboxContainer.appendChild(label);
 
         label.querySelector("input").addEventListener("change", (e) => {
@@ -95,7 +98,7 @@ function displayResults(shuffledCharacters, shuffledElements) {
                                              </tr>`).join('')}
                                      </tbody>
                                  </table>
-                                 <button id="resetButton" class="reset-button">リセット</button>`;
+                                 <button id="resetButton" class="reset-button">はじめから</button>`;
 
     document.getElementById("resetButton").addEventListener("click", reset);
 }
