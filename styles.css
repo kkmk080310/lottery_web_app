@@ -1,0 +1,92 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #F9F9F9;
+    text-align: center;
+}
+
+.container {
+    width: 40%; /* インナー幅を40%に設定 */
+    margin: 0 auto;
+}
+
+.checkbox-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3列2行のグリッド */
+    gap: 10px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 3px; /* チェックボックスと名前の距離をさらに縮める */
+    min-width: 160px; /* 名前部分の幅を160pxに統一 */
+    white-space: nowrap; /* 改行防止 */
+    justify-content: flex-start;
+}
+
+.input-container {
+    margin: 20px 0;
+}
+
+.input-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 5px 0;
+    align-items: center;
+}
+
+.input-row strong {
+    width: 100px; /* 名前部分の幅を統一 */
+    text-align: right;
+    flex-shrink: 0;
+}
+
+input {
+    padding: 5px;
+    flex-grow: 1;
+    min-width: 150px; /* 入力欄の幅を統一 */
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:disabled {
+    background-color: #ccc;
+}
+
+.result-container {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.result-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.result-table th, .result-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.result-table th {
+    background-color: #f2f2f2;
+}
+
+.hidden {
+    display: none;
+}
