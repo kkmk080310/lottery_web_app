@@ -11,11 +11,8 @@ function updateCheckboxes() {
     checkboxContainer.innerHTML = "";
     members.forEach(member => {
         const label = document.createElement("label");
-label.className = "checkboxItem";
-label.innerHTML = `
-    <input type="checkbox" class="checkbox" value="${member}">
-    ${member}
-`;
+        label.className = "checkbox-label";
+        label.innerHTML = `<input type="checkbox" value="${member}"> ${member}`;
         checkboxContainer.appendChild(label);
 
         label.querySelector("input").addEventListener("change", (e) => {
