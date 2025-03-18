@@ -9,7 +9,7 @@ body {
     margin: 0 auto;
 }
 
-@media (max-width: 768px) { /* 画面幅が768px以下（スマホサイズ）なら */
+@media (max-width: 800px) { /* 画面幅が800px以下（スマホサイズ）なら */
     .container {
         width: 95%; /* スマホでは95%に */
     }
