@@ -5,8 +5,14 @@ body {
 }
 
 .container {
-    width: 40%; /* インナー幅を40%に設定 */
+    width: 40%; /* デフォルトは40% */
     margin: 0 auto;
+}
+
+@media (max-width: 768px) { /* 画面幅が768px以下（スマホサイズ）なら */
+    .container {
+        width: 95%; /* スマホでは95%に */
+    }
 }
 
 .checkbox-container {
