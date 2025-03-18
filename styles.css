@@ -32,6 +32,15 @@ body {
     justify-content: flex-start;
 }
 
+.error-message {
+    color: red;
+    font-weight: bold;
+    margin: 10px 0;
+}
+.hidden {
+    display: none;
+}
+
 .input-container {
     margin: 20px 0;
 }
@@ -42,12 +51,17 @@ body {
     gap: 10px;
     margin: 5px 0;
     align-items: center;
+    margin-bottom: 16px;
 }
 
 .input-row strong {
     width: 100px; /* 名前部分の幅を統一 */
-    text-align: right;
+    text-align: center; /* テキストを中央揃え */
     flex-shrink: 0;
+    background-color: #DDE7F0; /* 背景色を追加 */
+    padding: 4px 0; /* 上下の余白 */
+    border-radius: 3px; /* 角を丸く */
+    font-size: 14px; /* フォントサイズを小さくする */
 }
 
 input {

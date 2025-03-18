@@ -60,11 +60,15 @@ function updateInputs() {
 }
 
 function shuffleTopics() {
+    const errorMessage = document.getElementById("errorMessage");
+    errorMessage.classList.add("hidden"); // まずはエラーを非表示
+
     const characters = selectedMembers.map(m => inputs[m]?.character || "");
     const elements = selectedMembers.map(m => inputs[m]?.element || "");
 
     if (new Set(characters).size !== characters.length || new Set(elements).size !== elements.length) {
-        alert("同じ単語が含まれています。異なる単語を入力してください。");
+        errorMessage.textContent = "同じ単語が含まれています。異なる単語を入力してください。";
+        errorMessage.classList.remove("hidden"); // エラーを表示
         return;
     }
 
@@ -77,6 +81,7 @@ function shuffleTopics() {
     } while (shuffledCharacters.some((char, i) => char === characters[i]) ||
              shuffledElements.some((elem, i) => elem === elements[i]));
 
+    errorMessage.classList.add("hidden"); // 成功したらエラーを非表示
     displayResults(shuffledCharacters, shuffledElements);
 }
 
@@ -103,7 +108,8 @@ function displayResults(shuffledCharacters, shuffledElements) {
 function reset() {
     selectedMembers = [];
     inputs = {};
-    resultContainer.innerHTML = "ここに結果が表示されます"; // デフォルトメッセージをセット
+    document.getElementById("errorMessage").classList.add("hidden"); // エラーを消す
+    resultContainer.innerHTML = "ここに結果が表示されます";
     updateInputs();
     updateCheckboxes();
 }
