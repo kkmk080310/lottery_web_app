@@ -84,7 +84,7 @@ function displayResults(shuffledCharacters, shuffledElements) {
     resultContainer.innerHTML = `<h2>シャッフル結果</h2>
                                  <table class="result-table">
                                      <thead>
-                                         <tr><th>名前</th><th>キャラクター</th><th>要素</th></tr>
+                                         <tr><th>描く人</th><th>キャラクター</th><th>要素</th></tr>
                                      </thead>
                                      <tbody>
                                          ${selectedMembers.map((member, i) =>
