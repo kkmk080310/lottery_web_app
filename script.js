@@ -63,25 +63,49 @@ function shuffleTopics() {
     const errorMessage = document.getElementById("errorMessage");
     errorMessage.classList.add("hidden"); // まずはエラーを非表示
 
-    const characters = selectedMembers.map(m => inputs[m]?.character || "");
-    const elements = selectedMembers.map(m => inputs[m]?.element || "");
+    // 各メンバーのお題を取得
+    let playerTopics = selectedMembers.map(member => ({
+        name: member,
+        character: inputs[member]?.character || "",
+        element: inputs[member]?.element || ""
+    }));
 
-    if (new Set(characters).size !== characters.length || new Set(elements).size !== elements.length) {
-        errorMessage.textContent = "同じ単語が含まれています。異なる単語を入力してください。";
-        errorMessage.classList.remove("hidden"); // エラーを表示
+    // 入力が足りない場合のチェック
+    if (playerTopics.some(topic => !topic.character || !topic.element)) {
+        errorMessage.textContent = "全員のキャラクターと要素を入力してください。";
+        errorMessage.classList.remove("hidden");
         return;
     }
 
-    let shuffledCharacters = [...characters];
-    let shuffledElements = [...elements];
+    let characters = playerTopics.map(topic => topic.character);
+    let elements = playerTopics.map(topic => topic.element);
+    let shuffledCharacters, shuffledElements;
+    let maxTries = 1000; // 無限ループ防止
+    let tries = 0;
 
     do {
-        shuffledCharacters.sort(() => Math.random() - 0.5);
-        shuffledElements.sort(() => Math.random() - 0.5);
-    } while (shuffledCharacters.some((char, i) => char === characters[i]) ||
-             shuffledElements.some((elem, i) => elem === elements[i]));
+        tries++;
+        if (tries > maxTries) {
+            errorMessage.textContent = "適切なシャッフルができませんでした。再度試してください。";
+            errorMessage.classList.remove("hidden");
+            return;
+        }
 
-    errorMessage.classList.add("hidden"); // 成功したらエラーを非表示
+        // キャラクターと要素を個別にシャッフル
+        shuffledCharacters = [...characters].sort(() => Math.random() - 0.5);
+        shuffledElements = [...elements].sort(() => Math.random() - 0.5);
+
+        // 条件を満たしているかチェック
+    } while (
+        shuffledCharacters.some((char, i) => char === characters[i]) ||  // 自分のキャラを引いていないか
+        shuffledElements.some((elem, i) => elem === elements[i]) ||     // 自分の要素を引いていないか
+        shuffledCharacters.some((char, i) => {                         // キャラと要素のペアが元と同じでないか
+            const originalIndex = characters.indexOf(char);
+            return shuffledElements[i] === elements[originalIndex];
+        })
+    );
+
+    // 結果を表示
     displayResults(shuffledCharacters, shuffledElements);
 }
 
@@ -104,6 +128,7 @@ function displayResults(shuffledCharacters, shuffledElements) {
 
     document.getElementById("resetButton").addEventListener("click", reset);
 }
+
 
 function reset() {
     selectedMembers = [];
