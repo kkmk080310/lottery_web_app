@@ -26,7 +26,7 @@ body {
 .checkbox-label {
     display: flex;
     align-items: center;
-    gap: 3px; /* チェックボックスと名前の距離をさらに縮める */
+    gap: 8px; /* チェックボックスと名前の距離をさらに縮める */
     min-width: 160px; /* 名前部分の幅を160pxに統一 */
     white-space: nowrap; /* 改行防止 */
     justify-content: flex-start;
@@ -66,8 +66,6 @@ body {
 
 input {
     padding: 5px;
-    flex-grow: 1;
-    min-width: 150px; /* 入力欄の幅を統一 */
 }
 
 button {
